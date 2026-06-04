@@ -30,6 +30,7 @@ class ProjectResponse(ProjectCreate):
 class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
+    status: Optional[TaskStatus] = TaskStatus.todo
     priority: int = Field(default=1, ge=1, le=5)
     due_date: Optional[date] = None
     assignee_id: Optional[int] = None
@@ -49,3 +50,6 @@ class TaskResponse(TaskCreate):
     created_at: datetime
     class Config:
         from_attributes = True
+
+class TaskStatusUpdate(BaseModel):
+    status: TaskStatus
