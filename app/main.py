@@ -19,7 +19,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         hashed_password=get_password_hash(user.password),
         full_name=user.full_name
     )
-    
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -63,15 +63,8 @@ def create_task(project_id: int, task: TaskCreate, db: Session = Depends(get_db)
     return new_task
 
 @app.get("/projects/{project_id}/tasks", response_model=List[TaskResponse])
-def get_tasks(
-    project_id: int, 
-    status: Optional[TaskStatus] = None, 
-    assignee_id: Optional[int] = None, 
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    db: Session = Depends(get_db), 
-    current_user: User = Depends(get_current_user)
-):
+def get_tasks(project_id: int, status: Optional[TaskStatus] = None, assignee_id: Optional[int] = None, page: int = Query(1, ge=1, description="Page number"), limit: int = Query(10, ge=1, le=100, description="Items per page"), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project or project.owner_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to view these tasks")
